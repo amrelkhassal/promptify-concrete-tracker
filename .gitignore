@@ -12,3 +12,4 @@ venv/
 data/runtime/
 *.log
 .DS_Store
+.env.azure

@@ -17,7 +17,7 @@ services:
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
-    command: ["azurite-blob", "--blobHost", "0.0.0.0", "--loose"]
+    command: ["azurite-blob", "--blobHost", "0.0.0.0", "--loose", "--skipApiVersionCheck"]
     ports:
       - "10000:10000"
     volumes:
@@ -41,6 +41,7 @@ services:
       - ./app:/app/app
       - ./alembic:/app/alembic
       - ./data:/app/data
+      - ../concrete-trakcer-prompts-comparison/BatchTest:/app/data/seed/BatchTest:ro
 
 volumes:
   pgdata:

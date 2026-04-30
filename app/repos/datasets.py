@@ -60,7 +60,7 @@ def add_document(
             blob_path=blob_path,
             mime_type=mime_type,
             ground_truth=ground_truth,
-            metadata=metadata,
+            doc_metadata=metadata,
         )
         .on_conflict_do_update(
             constraint="uq_dataset_doc",
@@ -68,9 +68,10 @@ def add_document(
                 "blob_path": blob_path,
                 "mime_type": mime_type,
                 "ground_truth": ground_truth,
-                "metadata": metadata,
+                "doc_metadata": metadata,
             },
         )
+        .execution_options(populate_existing=True)
         .returning(DatasetDocument)
     )
     return session.execute(stmt).scalar_one()

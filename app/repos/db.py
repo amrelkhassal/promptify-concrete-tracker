@@ -105,7 +105,7 @@ class DatasetDocument(Base):
     mime_type: Mapped[str] = mapped_column(String, nullable=False)
     ground_truth: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
     doc_metadata: Mapped[dict[str, Any] | None] = mapped_column(
-        "metadata", JSONB, nullable=True
+        JSONB, nullable=True
     )
 
     dataset: Mapped[Dataset] = relationship(back_populates="documents")

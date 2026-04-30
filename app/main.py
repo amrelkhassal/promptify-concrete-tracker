@@ -1,13 +1,21 @@
 import logging
+from pathlib import Path
 
 import streamlit as st
 from dotenv import load_dotenv
 
 from app.core.config import get_settings
-from app.core.seed import seed_default_config
+from app.core.seed import seed_dataset, seed_default_config
 
 
 load_dotenv()
+
+# When running locally outside Docker, fall back to the sibling project's BatchTest.
+_SIBLING_BATCH_TEST = (
+    Path(__file__).parent.parent.parent
+    / "concrete-trakcer-prompts-comparison"
+    / "BatchTest"
+)
 
 
 @st.cache_resource
@@ -21,7 +29,14 @@ def _bootstrap() -> dict:
         try:
             seed_default_config()
         except Exception as e:
-            logging.exception("Seed failed: %s", e)
+            logging.exception("Seed config failed: %s", e)
+        try:
+            bt = None
+            if _SIBLING_BATCH_TEST.exists():
+                bt = _SIBLING_BATCH_TEST
+            seed_dataset(bt)
+        except Exception as e:
+            logging.exception("Seed dataset failed: %s", e)
     return {"ready": True}
 
 
@@ -39,7 +54,9 @@ st.markdown(
 **What you can do here:**
 
 - **Playground** — upload one BL, edit the prompt and field schema, pick a model, run it, see the extracted JSON.
-- (Coming in later phases) Versioned configs, batch evaluation against a labelled dataset, dataset upload & ground-truth.
+- **Configs** — manage saved configs, browse version history, compare diffs, export JSON.
+- **Batch Eval** — run a config against a labelled dataset, see per-field accuracy, download Excel report.
+- **Datasets** — upload new ground-truth datasets (ZIP of BLs + Excel with expected values).
 
 Use the left sidebar to navigate.
 """
